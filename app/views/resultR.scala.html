@@ -1,0 +1,59 @@
+@(file: String, message: String)(menuItem: Int)
+
+@main("Result R code analysis","","result R", menuItem) {
+	<!-- codeMirror -->
+    <link rel="stylesheet" href="@routes.Assets.versioned("codeMirror/lib/codemirror.css")">
+    <script src="@routes.Assets.versioned("codeMirror/lib/codemirror.js")"></script>
+    <script src="@routes.Assets.versioned("codeMirror/mode/r/r.js")"></script>
+    <link rel="stylesheet" href="@routes.Assets.versioned("codeMirror/theme/eclipse.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("codeMirror/addon/display/fullscreen.css")">
+	<script src="@routes.Assets.versioned("codeMirror/addon/display/fullscreen.js")"></script>
+	<!-- folding -->
+	<link rel="stylesheet" href="@routes.Assets.versioned("codeMirror/addon/fold/foldgutter.css")" />
+	<script src="@routes.Assets.versioned("codeMirror/addon/fold/foldcode.js")"></script>
+  	<script src="@routes.Assets.versioned("codeMirror/addon/fold/foldgutter.js")"></script>
+  	<script src="@routes.Assets.versioned("codeMirror/addon/fold/brace-fold.js")"></script>
+  	<script src="@routes.Assets.versioned("codeMirror/addon/fold/xml-fold.js")"></script>
+  	<script src="@routes.Assets.versioned("codeMirror/addon/fold/markdown-fold.js")"></script>
+  	<script src="@routes.Assets.versioned("codeMirror/addon/fold/comment-fold.js")"></script>
+  	<script src="@routes.Assets.versioned("codeMirror/addon/fold/indent-fold.js")"></script>
+  	<script src="@routes.Assets.versioned("codeMirror/mode/javascript/javascript.js")"></script>
+  	<script src="@routes.Assets.versioned("codeMirror/mode/xml/xml.js")"></script>
+  	<script src="@routes.Assets.versioned("codeMirror/mode/markdown/markdown.js")"></script>
+	<!-- Your Page Content Here -->
+		  <div class="box">
+            <div class="box-header with-border">
+              <h3 class="box-title">Random code analysis</h3>
+            </div>
+            <div class="box-body">
+              <textarea id="code" name="code">@message</textarea>
+        <script type="text/javascript">
+		    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+		      mode: "r",
+		      lineNumbers: true,
+		      lineWrapping: true,
+		      theme: "eclipse",
+		      extraKeys: {
+		        "F11": function(cm) {
+		          cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+		        },
+		        "Esc": function(cm) {
+		          if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+		        },
+		        "Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor());
+		        }
+		      },
+		      foldGutter: {
+	                rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.indent, CodeMirror.fold.comment)
+	            },
+		      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+
+			     
+		    });
+		</script>
+            </div><!-- /.box-body -->
+            <div class="box-footer">
+		        	Press F11 when cursor is in the editor to toggle full screen editing. Esc can also be used to exit full screen editing.
+		    </div>
+          </div>	
+}

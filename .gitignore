@@ -1,0 +1,35 @@
+# general
+*~
+*.log
+tmp
+dump
+
+# SBT
+dist
+project/boot
+project/target
+project/plugins/target
+target
+.target
+/lib
+
+# Play
+logs
+RUNNING_PID
+
+# Idea
+.idea/
+.idea_modules/
+
+# Eclipse
+.settings
+.cache
+.project
+.classpath
+.scala_dependencies
+.cache-main
+.cache-tests
+bin
+
+# Project specificic
+/public/tmpUpdateFile

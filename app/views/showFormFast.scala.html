@@ -1,0 +1,121 @@
+@(message: 		String,
+        parametersForm:	Form[ParameterData],
+        domain:     Seq[(String,Int)],
+        objDom:     Seq[(String,Int)],
+        widSco:     Seq[(String,Int)],
+        narStr:		Seq[(String,Int)])(menuItem : Int)(implicit messages: Messages)
+
+@import views.html.parameters._
+
+
+@main("Analyze Fast Code","see the instructions below!","Analyze Fast code",menuItem) {
+    <!-- Your Page Content Here -->
+    <!-- codeMirror -->
+    <link rel="stylesheet" href="@routes.Assets.versioned("codeMirror/lib/codemirror.css")">
+    <script src="@routes.Assets.versioned("codeMirror/lib/codemirror.js")"></script>
+    <script src="@routes.Assets.versioned("codeMirror/mode/r/r.js")"></script>
+    <link rel="stylesheet" href="@routes.Assets.versioned("codeMirror/theme/eclipse.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("codeMirror/addon/display/fullscreen.css")">
+    <script src="@routes.Assets.versioned("codeMirror/addon/display/fullscreen.js")"></script>
+
+    <form class="form-horizontal" action="@routes.Application.resultFast()" method="post" id="formId" name="formId">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Select your file or choose one of the examples</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="form-group ">
+                            <label for="id-file" class="col-sm-2 control-label">Select File</label>
+                            <input type="file" name="file" id="id-file" onchange="loadfile(this)" class="">
+                        </div>
+
+                        <div class="form-group ">
+                            <label for="Example" class="col-sm-2 control-label">Example</label>
+                            <div class="col-sm-4">
+                                <select name="Example" id="Example" class="form-control" onchange="loadExample()">
+                                    <option value="-1" id="-1" selected="selected">Select file from a list</option>
+                                    <option value="aaron2.fst" id="0">aaron2.fst</option>
+                                    <option value="ackerman.fst" id="1">ackerman.fst</option>
+                                    <option value="as-hh.fst" id="2">as-hh.fst</option>
+                                    <option value="as-hybrid.fst" id="3">as-hybrid.fst</option>
+                                    <option value="as-nested.fst" id="4">as-nested.fst</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div><!-- /.box-body -->
+                    <div class="box-footer">
+                    </div><!-- /.box-footer-->
+                </div>
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Editor: Scrivi il codice nell'editor o carica un file esistente</h3>
+                    </div>
+                    <div class="box-body">
+                        <textarea id="code" name="code"></textarea>
+                        <script type="text/javascript">
+                                var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+                                    lineNumbers: true,
+                                    theme: "eclipse",
+                                    extraKeys: {
+                                        "F11": function(cm) {
+                                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                                        },
+                                        "Esc": function(cm) {
+                                            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                                        }
+                                    }
+                                });
+
+                                function loadfile(input){
+                                    var reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        //document.getElementById('code').value = e.target.result;
+                                        editor.setValue(e.target.result);
+                                    }
+                                    reader.readAsText(input.files[0]);
+                                }
+
+                                function loadExample(){
+                                    var filename = document.formId.Example.options[document.formId.Example.selectedIndex].value;
+                                    var dir = "/assets/example/fast/";
+                                    var file = dir.concat(filename);
+                                    var text = "";
+                                    $.get(file, function(ris) {
+                                        text=text.concat(ris);
+                                        editor.setValue(text);
+                                    });
+                                }
+                        </script>
+
+                        <div class="box-footer">
+                            Press F11 when cursor is in the editor to toggle full screen editing. Esc can also be used to exit full screen editing.
+                        </div><!-- /.box-footer-->
+                    </div><!-- /.box-body -->
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Parameters</h3>
+                    </div>
+                    <div class="box-body">
+                        @fieldsetCommon(parametersForm,domain,objDom,widSco,narStr)
+                    </div><!-- /.box-body -->
+                    <div class="box-footer">
+                        Footer
+                    </div><!-- /.box-footer-->
+                </div>
+            </div>
+        </div>
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <center>
+                    <input type="submit" class="btn btn-success" value="Submit">
+                </center>
+            </div>
+        </div>
+    </form>
+}

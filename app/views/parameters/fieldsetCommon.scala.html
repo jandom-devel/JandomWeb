@@ -1,0 +1,38 @@
+@(parameterForm:	Form[ParameterData],
+  domain:       Seq[(String,Int)],
+  objDom:       Seq[(String,Int)],
+  widSco:       Seq[(String,Int)],
+  narStr:		Seq[(String,Int)])(implicit messages: Messages)
+
+@import views.html.bootstrap3.{selectB, text, select}
+
+<fieldset>
+    @select(parameterForm("parData.Domain"),
+        label = "Domain",
+        optionMap = domain,
+        isMultiple = false,
+        help = "Select the domain. (required)")
+
+    @select(parameterForm("parData.Object Domain"),
+        label = "Object Domain",
+        optionMap = objDom,
+        isMultiple = false,
+        help = "Select the object domain. (required)")
+
+    @select(parameterForm("parData.Widening Scope"),
+        label = "Widening Scope",
+        optionMap = widSco,
+        isMultiple = false,
+        help = "Select the widening scope. (required)")
+
+    @select(parameterForm("parData.Narrowing Strategy"),
+        label = "Narrowing Strategy",
+        optionMap = narStr,
+        isMultiple = false,
+        help = "Select the narrowing strategy. (required)")
+
+    @text(parameterForm("parData.Delay"),
+        label = "Delay",
+        placeholder = "Delay",
+        help = "Please enter the delay. (required)")
+</fieldset>

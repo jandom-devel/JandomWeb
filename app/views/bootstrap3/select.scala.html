@@ -1,0 +1,20 @@
+@(field: Field, label: String = "CHANGEME", optionMap: Seq[(String, Int)], isMultiple: Boolean, help: String = "", onChange: String = "")
+
+<div class="form-group @if(field.hasErrors) {has-error}">
+    <label class="col-sm-4 control-label" for="@field.id">@label</label>
+    <div class="col-sm-8">
+        <select
+        class="form-control"
+        id="@field.id"
+        onchange="@onChange"
+        name="@if(isMultiple) {@(field.name + "[]")} else {@field.name}"
+        @if(isMultiple) {multiple="multiple"}>
+
+        @for((optionName, optionId) <- optionMap) {
+            <option id="@optionId" value="@optionId">@optionName</option>
+        }
+        </select>
+        <span class="help-block">@help</span>
+        <span class="help-block">@{field.error.map { error => error.message }}</span>
+    </div>
+</div>

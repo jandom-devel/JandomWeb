@@ -1,0 +1,14 @@
+class jimpletest.B extends java.lang.Object
+{
+
+    void <init>()
+    {
+        jimpletest.B this;
+
+        this := @this: javatest.B;
+
+        specialinvoke this.<java.lang.Object: void <init>()>();
+
+        return;
+    }
+}

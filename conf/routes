@@ -1,0 +1,28 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+GET     /index.html                 controllers.Application.index
+# Credits
+GET     /credits                    controllers.Application.credits
+# R Syntax
+GET     /syntaxR                    controllers.Application.syntaxR
+# Tutorial
+GET     /tutorial                   controllers.Application.tutorial
+# Analyze Random code
+GET		/random						controllers.Application.analyzeR
+POST	/resultR					controllers.Application.resultR
+# Analyze Fast code
+GET		/fast						controllers.Application.analyzeFast
+POST	/resultFast					controllers.Application.resultFast
+# Analyze Java Bytecode
+GET     /bytecode                   controllers.Application.analyzeBytecode
+POST    /updateFile                 controllers.Application.updateFileSoot
+POST    /showByteCode               controllers.Application.showBytecode
+POST    /resultBytecode             controllers.Application.resultBytecode
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+

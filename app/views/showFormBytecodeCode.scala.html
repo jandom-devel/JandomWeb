@@ -1,0 +1,195 @@
+@(      message:            String,
+        parametersForm:     Form[ParameterData],
+        domain:             Seq[(String,Int)],
+        objDom:             Seq[(String,Int)],
+        widSco:             Seq[(String,Int)],
+        narStr:		        Seq[(String,Int)],
+        parametersBytecodeSpecific:	Form[ParameterBytecodeData],
+        classSoot:	        Seq[(String,Int)],
+        methodsSoot:        Seq[(Seq[(String,Int)],Int)],
+        irType:             Seq[(String,Int)],
+        analysisType:       Seq[(String,Int)],
+        textCode:           String,
+        parSelected:        ParameterBytecodeData)(menuItem : Int)(implicit messages: Messages)
+
+@import views.html.parameters._
+@import views.html.bootstrap3.{selectB, text, select}
+
+
+@main("Analyze Java Bytecode","see the instructions below!","Analyze R code",menuItem) {
+    <!-- Your Page Content Here -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script>
+        <!-- codeMirror -->
+    <link rel="stylesheet" href="@routes.Assets.versioned("codeMirror/lib/codemirror.css")">
+    <script src="@routes.Assets.versioned("codeMirror/lib/codemirror.js")"></script>
+    <script src="@routes.Assets.versioned("codeMirror/mode/r/r.js")"></script>
+    <link rel="stylesheet" href="@routes.Assets.versioned("codeMirror/theme/eclipse.css")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("codeMirror/addon/display/fullscreen.css")">
+    <script src="@routes.Assets.versioned("codeMirror/addon/display/fullscreen.js")"></script>
+
+    <script type="text/javascript">
+        // User JavaScript this onload function
+        window.onload = function() {
+            document.getElementById('classes').value = @parSelected.classes.toInt;
+            document.getElementById('method').value = @parSelected.method.toInt;
+            document.getElementById('irType').value = @parSelected.irType;
+            document.getElementById('analysisType').value = @parSelected.analysisType;
+            document.getElementById('parData_Domain').value = @parSelected.parData.domain;
+            document.getElementById('parData_Object Domain').value = @parSelected.parData.objDomain;
+            document.getElementById('parData_Widening Scope').value = @parSelected.parData.widScope;
+            document.getElementById('parData_Narrowing Strategy').value = @parSelected.parData.narrStrategy;
+            document.getElementById('parData_Delay').value = @parSelected.parData.delay;
+        }
+
+        var stMetArr = "";
+        var jsArr = "";
+        $(document).ready(function () {
+            stMetArr = '{"items" :[ @Html(methodsSoot.map(s => "{\"klass\" : \"" + s._2 + "\", \"methods\" : " + "[" + s._1.map(m => "{\"index\" : \"" + m._2 + "\", \"method\" : \"" + m._1 + "\"}").mkString(", ") + "]" + "}").mkString(", "))]}';
+            jsArr = JSON.parse(stMetArr);
+            //console.log(jsArr);
+        });
+
+        function changeKlass() {
+            var firstSelect = $("#classes");
+            var secondSelect = $("#method");
+            var valuesForSecondSelect = jsArr.items[firstSelect.val()].methods; //get values based on 1st selection box
+            secondSelect.empty(); // remove old options
+            editor.setValue(""); // remove code
+            disableAnalyze();
+            //console.log(valuesForSecondSelect);
+            $.each(valuesForSecondSelect, function(key, value) {
+                //loop through all values for 2nd box and add them
+                secondSelect.append($("<option></option>")
+                        .attr("value", key).attr("id", key).text(value.method));
+            });
+        }
+
+        function changeMethod() {
+            editor.setValue(""); // remove code
+            disableAnalyze();
+        }
+
+        function disableAnalyze(){
+            document.getElementById("submitButton").disabled = true;
+            document.getElementById("submitOpt").disabled = false;
+        }
+
+        function changeOptSubmit(){
+            document.getElementById("origine").value = "1";
+            document.getElementById("formId").submit();
+        }
+
+    </script>
+
+    <form class="form-horizontal" action="@routes.Application.resultBytecode()" method="post" id="formId" name="formId">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Select your file or choose one of the examples</h3>
+                    </div>
+                    <div class="box-body">
+                        <p>Jar selected: @message</p>
+                    </div><!-- /.box-body -->
+                    <div class="box-footer">
+                    </div><!-- /.box-footer-->
+                </div>
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Class and method selected</h3>
+                    </div>
+                    <div class="box-body">
+
+                        @select(
+                            parametersBytecodeSpecific("classes"),
+                            label = "Class",
+                            optionMap = classSoot,
+                            isMultiple = false,
+                            help = "Select the class. (required)",
+                            onChange = "changeKlass()")
+                        @select(
+                            parametersBytecodeSpecific("method"),
+                            label = "Method",
+                            optionMap = methodsSoot.filter(_._2 == parSelected.classes.toInt).head._1,
+                            isMultiple = false,
+                            help = "Select the method. (required)",
+                            onChange = "changeMethod()")
+                        @select(
+                            parametersBytecodeSpecific("irType"),
+                            label = "IR Type",
+                            optionMap = irType,
+                            isMultiple = false,
+                            help = "Select the IR type. (required)")
+                        @select(
+                            parametersBytecodeSpecific("analysisType"),
+                            label = "Analysis type",
+                            optionMap = analysisType,
+                            isMultiple = false,
+                            help = "Select the analysis type. (required)")
+
+                        <input type="hidden" name="origine" id="origine" value="0">
+
+                        <center>
+                            <input id="submitOpt" type="button" class="btn btn-success" value="Change option" disabled onclick="changeOptSubmit()">
+                        </center>
+
+                    </div><!-- /.box-body -->
+                    <div class="box-footer">
+                    </div><!-- /.box-footer-->
+                </div>
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Editor:</h3>
+                    </div>
+                    <div class="box-body">
+                        <textarea id="code" name="parData.code">@textCode</textarea>
+                        <script type="text/javascript">
+                                var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+                                    lineNumbers: true,
+                                    theme: "eclipse",
+                                    readOnly: true,
+                                    extraKeys: {
+                                        "F11": function(cm) {
+                                            cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                                        },
+                                        "Esc": function(cm) {
+                                            if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                                        }
+                                    }
+                                });
+
+
+
+
+                        </script>
+
+                        <div class="box-footer">
+                            Press F11 when cursor is in the editor to toggle full screen editing. Esc can also be used to exit full screen editing.
+                        </div><!-- /.box-footer-->
+                    </div><!-- /.box-body -->
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Parameters</h3>
+                    </div>
+                    <div class="box-body">
+                    @fieldsetCommon(parametersForm,domain,objDom,widSco,narStr)
+                    </div><!-- /.box-body -->
+                    <div class="box-footer">
+                        Footer
+                    </div><!-- /.box-footer-->
+                </div>
+            </div>
+        </div>
+
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <center>
+                    <input id="submitButton" type="submit" class="btn btn-success" value="Analyze">
+                </center>
+            </div>
+        </div>
+    </form>
+}
