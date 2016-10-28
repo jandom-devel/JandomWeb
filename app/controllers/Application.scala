@@ -5,12 +5,12 @@ import models._
 import play.api.Play._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages.Implicits._
+import play.api.i18n.MessagesApi
 import play.api.mvc._
 import java.io.File
+import javax.inject._
 
-
-class Application extends Controller {
+class Application @Inject() (implicit val messages: MessagesApi)  extends Controller  {
 
   val menuItemCONST = Map[String, Int] ("INDEX"       -> 0,
                                         "CREDITS"     -> 1,

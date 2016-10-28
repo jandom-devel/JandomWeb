@@ -10,7 +10,7 @@
         irType:             Seq[(String,Int)],
         analysisType:       Seq[(String,Int)],
         textCode:           String,
-        parSelected:        ParameterBytecodeData)(menuItem : Int)(implicit messages: Messages)
+        parSelected:        ParameterBytecodeData)(menuItem : Int)(implicit messages: MessagesApi)
 
 @import views.html.parameters._
 @import views.html.bootstrap3.{selectB, text, select}
