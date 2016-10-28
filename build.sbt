@@ -10,7 +10,8 @@ libraryDependencies ++= Seq(
   cache,
   jdbc,
   ws,
-  specs2 % Test
+  specs2 % Test,
+  "it.unich.jandom" %% "jandom" % "0.1.3-SNAPSHOT"
 )
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
@@ -20,3 +21,14 @@ resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 routesGenerator := InjectedRoutesGenerator
 
 fork in run := true
+
+// Add PPL jar when found
+
+val optionalPPLPathName = try {
+    val PPLPathName = Process("ppl-config -l").lines.head+"/ppl/ppl_java.jar"
+    if (file(PPLPathName).exists) Some(PPLPathName) else None
+  } catch {
+    case _ : Exception => None 
+  }
+
+unmanagedJars in Compile ++= (optionalPPLPathName map file).toSeq
