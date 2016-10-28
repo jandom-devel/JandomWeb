@@ -117,8 +117,18 @@ class Application extends Controller {
   var filename = ""
   var classSoot = Seq[String]()
   var methodsSoot = Seq[Seq[String]]()
-  val irType = ui.OutputInterface.getIRType
-  val analysisType = ui.OutputInterface.getAnalysisType
+  val irType = Seq ("Baf", "Jimple")
+  val analysisType = Seq("Numerical", "Object")
+
+  def getKlassAndMethods (classPathField: String) : (Seq[String], Seq[Seq[String]]) = {
+    var methods = new scala.collection.mutable.ListBuffer[Seq[String]]()
+    val classes = ui.OutputInterface.getClasses(classPathField)
+    for (klass <- (classes.zipWithIndex)){
+      methods += (ui.OutputInterface.getMethods(classPathField, klass._2))
+    }
+    (classes, methods.toSeq)
+  }
+
 
   def analyzeBytecode = Action {
     Ok(views.html.showFormBytecode("", parametersForm, domain, objDom, widSco, narStr)(menuItemCONST("ANALYZE_BC")))
@@ -134,7 +144,7 @@ class Application extends Controller {
         tmpDirF.mkdir()
 
       ui.OutputInterface.unzipJar(jarDir, filename, tmpDir)
-      val (classSoot1, methodsSoot1) = ui.OutputInterface.getKlassAndMethods(tmpDir)
+      val (classSoot1, methodsSoot1) = getKlassAndMethods(tmpDir)
       classSoot = classSoot1
       methodsSoot = methodsSoot1
 
@@ -149,7 +159,7 @@ class Application extends Controller {
         Ok(views.html.home(filename, "Description", "", menuItemCONST("INDEX")))
         tmpDir = exampleDir + "/" + filename.toString().substring(0, filename.toString().lastIndexOf('.'))
 //        tmpDir = filename.toString().substring(0, filename.toString().lastIndexOf('.'))
-        val (classSoot1, methodsSoot1) = ui.OutputInterface.getKlassAndMethods(tmpDir)
+        val (classSoot1, methodsSoot1) = getKlassAndMethods(tmpDir)
         classSoot = classSoot1
         methodsSoot = methodsSoot1
         val methodsSeq = methodsSoot.map(a => a.zipWithIndex).zipWithIndex
