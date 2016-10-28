@@ -4,6 +4,10 @@
 tmp
 dump
 
+# Activator
+.sbtserver
+.sbtserver.lock
+
 # SBT
 dist
 project/boot
