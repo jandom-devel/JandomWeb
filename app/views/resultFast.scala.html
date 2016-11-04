@@ -1,4 +1,5 @@
 @(file: String, message: String, grafo: String)(menuItem: Int)
+@import org.apache.commons.lang3.StringEscapeUtils.escapeEcmaScript
 
 @main("Result Fast code analysis","","result Fast", menuItem) {
     <!-- codeMirror -->
@@ -56,7 +57,7 @@
 
                     </div>
                     <script>
-                        document.getElementById("grafo").innerHTML = Viz("@Html(grafo)");
+                        document.getElementById("grafo").innerHTML = Viz("@Html(escapeEcmaScript(grafo))");
                     </script>
                 </div>
             </div>
