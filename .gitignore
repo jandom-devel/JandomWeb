@@ -34,6 +34,3 @@ RUNNING_PID
 .cache-main
 .cache-tests
 bin
-
-# Project specificic
-/public/tmpUpdateFile
